@@ -1,0 +1,27 @@
+{
+  "name": "broccoli-compass",
+  "version": "0.0.1",
+  "description": "sass-compass plugin for Broccoli",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/g13013/broccoli-compass"
+  },
+  "bugs": {
+    "url": "https://github.com/g13013/broccoli-compass/issues"
+  },
+  "author": {
+    "name": "Aboubakr GASMI",
+    "email": "g13013@gmail.com"
+  },
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "dependencies": {
+    "broccoli-writer": "^0.1.1",
+    "rsvp": "^3.0.6",
+    "broccoli-static-compiler": "^0.1.4"
+  }
+}
