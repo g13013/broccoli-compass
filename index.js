@@ -37,16 +37,19 @@ CompassCompiler.prototype.write = function (readTree, destDir) {
   return readTree(this.inputTree).then(function (srcDir) {
     var cmdLine;
     var cmdArgs = aArg.concat(self.files);//src is project dir or specifed files
-    var cssDir = path.relative(srcDir, destDir) + '/css';
     var options = merge({}, self.options);
+    var cssDir = path.join(destDir, options.cssDir || '');
+
+    //make cssDir relative to SRC
+    cssDir = path.relative(srcDir, cssDir);
     options.cssDir = '"'+ cssDir + '"';
-    //options.sassDir = '"'+ srcDir + '"';
+
     cmdArgs = cmdArgs.concat( generateArgs(options) );
     cmdLine = cmdArgs.join(' ');
     return compile(cmdLine, {cwd: srcDir}).then(function () {
       return destDir;
     }, function (err) {
-      console.log('[broccoli-compass] Error: ', err.message + 'The command-line arguments was: `' + cmdLine + '`');
+      console.log('[broccoli-compass] Error: ', err.message + '. The command-line arguments was: `' + cmdLine + '`');
     });
   });
 };
