@@ -1,6 +1,6 @@
 {
   "name": "broccoli-compass",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Sass-compass plugin for Broccoli",
   "main": "index.js",
   "keywords": ["broccoli-plugin", "broccoli", "compass", "compiler"],
