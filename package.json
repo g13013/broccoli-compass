@@ -3,7 +3,7 @@
   "version": "0.0.2",
   "description": "Sass-compass plugin for Broccoli",
   "main": "index.js",
-  "keywords": ["broccoli", "compass", "compiler"],
+  "keywords": ["broccoli-plugin", "broccoli", "compass", "compiler"],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
