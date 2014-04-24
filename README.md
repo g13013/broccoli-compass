@@ -27,4 +27,4 @@ Please refere to the [compass configuration](http://compass-style.org/help/tutor
 
 
 ##License
-[MIT](https://github.com/g13013/broccoli-compass/blob/master/LICENSE)
+[MIT](https://github.com/g13013/broccoli-compass/blob/master/LICENSE.md)
