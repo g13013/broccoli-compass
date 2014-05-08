@@ -32,13 +32,14 @@ function CompassCompiler(inputTree, files, options) {
 CompassCompiler.prototype = Object.create(Writer.prototype);
 CompassCompiler.prototype.constructor = CompassCompiler;
 CompassCompiler.prototype.write = function (readTree, destDir) {
-  var self = this,
-      aArg = ['compass', 'compile'];
+  var self = this;
   return readTree(this.inputTree).then(function (srcDir) {
     var cmdLine;
-    var cmdArgs = aArg.concat(self.files);//src is project dir or specifed files
     var options = merge({}, self.options);
+    var cmdArgs = [options.compassCommand, 'compile', self.files]; //src is project dir or specifed files
     var cssDir = path.join(destDir, options.cssDir || '');
+
+    delete options.compassCommand;
 
     //make cssDir relative to SRC
     cssDir = path.relative(srcDir, cssDir);
@@ -56,7 +57,8 @@ CompassCompiler.prototype.write = function (readTree, destDir) {
 
 CompassCompiler.prototype.options = {
   relativeAssets: true,
-  sassDir: '.'
+  sassDir: '.',
+  compassCommand: 'compass'
 };
 
 function merge(obj1, obj2) {
