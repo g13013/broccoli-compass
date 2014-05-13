@@ -36,7 +36,8 @@ CompassCompiler.prototype.write = function (readTree, destDir) {
   return readTree(this.inputTree).then(function (srcDir) {
     var cmdLine;
     var options = merge({}, self.options);
-    var cmdArgs = [options.compassCommand, 'compile', self.files]; //src is project dir or specifed files
+    var cmd = [options.compassCommand, 'compile'];
+    var cmdArgs = cmd.concat(self.files); //src is project dir or specifed files
     var cssDir = path.join(destDir, options.cssDir || '');
 
     delete options.compassCommand;
