@@ -83,7 +83,7 @@ function generateArgs(options) {//generate command line options in format that c
       if (value === false || value === null) {
         continue;
       }
-      option = '--' + op.replace(/([A-Z])/, '-$1').toLowerCase();
+      option = '--' + op.replace(/([A-Z])/g, '-$1').toLowerCase();
       if (value === true) {
         value = '';
       } else {
