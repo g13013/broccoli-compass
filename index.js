@@ -74,24 +74,39 @@ function merge(obj1, obj2) {
   return obj1;
 }
 
-function generateArgs(options) {//generate command line options in format that compass understands
-  var op, option, value,
-      args = [];
+//TODO export this fonction from a module and integrate tests
+function generateArgs(options) {//generate command line options in a format that compass understands
+  var i, op, option, value;
+  var option = '';
+  var args = [];
   for (op in options) {
     if (options.hasOwnProperty(op)) {
       value = options[op];
+
       if (value === false || value === null) {
         continue;
       }
-      option = '--' + op.replace(/([A-Z])/g, '-$1').toLowerCase();
+
+      op = '--' + op.replace(/([A-Z])/g, '-$1').toLowerCase();
       if (value === true) {
-        value = '';
-      } else {
-        value = ' ' + value;
+         args.push(op);
+         continue;
       }
-      args.push(option + value);
+
+      if (value instanceof Array) {
+        //multiple value `--option value1 --option value2`
+        for (i = 0; i < value.length; i++) {
+          option = option + ' ' + op + ' ' + value[i];
+        }
+      } else {
+        //single value `--option value`
+        option = op + ' ' + value;
+      }
+
+      args.push(option.trim());
     }
   }
   return args;
 }
+
 module.exports = CompassCompiler;
