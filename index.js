@@ -51,7 +51,8 @@ CompassCompiler.prototype.write = function (readTree, destDir) {
     return compile(cmdLine, {cwd: srcDir}).then(function () {
       return destDir;
     }, function (err) {
-      console.log('[broccoli-compass] Error: ', err.message + '. The command-line arguments was: `' + cmdLine + '`');
+      msg = err.message || err;
+      console.log('[broccoli-compass] Error: ', msg + '\narguments: `' + cmdLine + '`');
     });
   });
 };
