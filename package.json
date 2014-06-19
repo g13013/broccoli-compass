@@ -26,8 +26,8 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "dependencies": {
-    "broccoli-writer": "^0.1.1",
     "rsvp": "^3.0.6",
-    "broccoli-static-compiler": "^0.1.4"
+    "broccoli-static-compiler": "^0.1.4",
+    "broccoli-caching-writer": "~0.3.1"
   }
 }
