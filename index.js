@@ -1,6 +1,6 @@
 var path = require('path');
 var exec = require('child_process').exec;
-var Writer = require('broccoli-writer');
+var Writer = require('broccoli-caching-writer');
 var rsvp = require('rsvp');
 
 function compile(cmdLine, options) {
@@ -31,29 +31,26 @@ function CompassCompiler(inputTree, files, options) {
 
 CompassCompiler.prototype = Object.create(Writer.prototype);
 CompassCompiler.prototype.constructor = CompassCompiler;
-CompassCompiler.prototype.write = function (readTree, destDir) {
-  var self = this;
-  return readTree(this.inputTree).then(function (srcDir) {
-    var cmdLine;
-    var options = merge({}, self.options);
-    var cmd = [options.compassCommand, 'compile'];
-    var cmdArgs = cmd.concat(self.files); //src is project dir or specifed files
-    var cssDir = path.join(destDir, options.cssDir || '');
+CompassCompiler.prototype.updateCache = function (srcDir, destDir) {
+  var cmdLine;
+  var options = merge({}, this.options);
+  var cmd = [options.compassCommand, 'compile'];
+  var cmdArgs = cmd.concat(this.files); //src is project dir or specifed files
+  var cssDir = path.join(destDir, options.cssDir || '');
 
-    delete options.compassCommand;
+  delete options.compassCommand;
 
-    //make cssDir relative to SRC
-    cssDir = path.relative(srcDir, cssDir);
-    options.cssDir = '"'+ cssDir + '"';
+  //make cssDir relative to SRC
+  cssDir = path.relative(srcDir, cssDir);
+  options.cssDir = '"'+ cssDir + '"';
 
-    cmdArgs = cmdArgs.concat( generateArgs(options) );
-    cmdLine = cmdArgs.join(' ');
-    return compile(cmdLine, {cwd: srcDir}).then(function () {
-      return destDir;
-    }, function (err) {
-      msg = err.message || err;
-      console.log('[broccoli-compass] Error: ', msg + '\narguments: `' + cmdLine + '`');
-    });
+  cmdArgs = cmdArgs.concat( generateArgs(options) );
+  cmdLine = cmdArgs.join(' ');
+  return compile(cmdLine, {cwd: srcDir}).then(function () {
+    return destDir;
+  }, function (err) {
+    msg = err.message || err;
+    console.log('[broccoli-compass] Error: ', msg + '\narguments: `' + cmdLine + '`');
   });
 };
 
