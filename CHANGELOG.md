@@ -1,5 +1,6 @@
 ### 0.0.7
-* Use `merge` npm module in place of builtin merge function
+* Use `dargs` module in place of builtin generateArgs function
+* Use `merge` module in place of builtin merge function
 
 ### 0.0.6
 * Added CHANGELOG.md file
