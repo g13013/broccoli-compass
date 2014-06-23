@@ -1,5 +1,6 @@
 var path = require('path');
 var exec = require('child_process').exec;
+var merge = require('merge');
 var Writer = require('broccoli-caching-writer');
 var rsvp = require('rsvp');
 
@@ -33,7 +34,7 @@ CompassCompiler.prototype = Object.create(Writer.prototype);
 CompassCompiler.prototype.constructor = CompassCompiler;
 CompassCompiler.prototype.updateCache = function (srcDir, destDir) {
   var cmdLine;
-  var options = merge({}, this.options);
+  var options = merge(true, this.options);
   var cmd = [options.compassCommand, 'compile'];
   var cmdArgs = cmd.concat(this.files); //src is project dir or specifed files
   var cssDir = path.join(destDir, options.cssDir || '');
@@ -59,18 +60,6 @@ CompassCompiler.prototype.options = {
   sassDir: '.',
   compassCommand: 'compass'
 };
-
-function merge(obj1, obj2) {
-  var key;
-  obj1 = obj1 || {};
-  obj2 = obj2 || {};
-  for (key in obj2) {
-    if (obj2.hasOwnProperty(key)) {
-      obj1[key] = obj2[key];
-    }
-  }
-  return obj1;
-}
 
 //TODO export this fonction from a module and integrate tests
 function generateArgs(options) {//generate command line options in a format that compass understands

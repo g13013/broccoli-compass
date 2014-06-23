@@ -1,3 +1,6 @@
+### 0.0.7
+* Use `merge` npm module in place of builtin merge function
+
 ### 0.0.6
 * Added CHANGELOG.md file
 * Use `broccoli-caching-writer` in place of `broccoli-writer` to improve performance
