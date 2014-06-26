@@ -30,6 +30,13 @@
     "broccoli-static-compiler": "^0.1.4",
     "dargs": "^0.1.0",
     "merge": "^1.1.3",
-    "rsvp": "^3.0.6"
+    "rsvp": "^3.0.6",
+    "fs-extra": "~0.9.1",
+    "glob-expand": "0.0.2"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "chai": "*",
+    "broccoli": "~0.12.3"
   }
 }
