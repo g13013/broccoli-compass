@@ -78,12 +78,16 @@ function copyDir(src, dest) {
 function cleanupSource(srcDir, options) {
   return new rsvp.Promise(function(resolve, reject){
     var result = expand({ cwd: srcDir }, '**/*.css', '.sass-cache');
-    // Sanitize
+    //Sanitize CSS dir
     if(options.cssDir){
-      result.push(options.cssDir.replace(/"/g, ''));
+      var cssDir = options.cssDir.replace(/"/g, '');
+      if(cssDir && cssDir !== '.') {
+        result.push(cssDir);
+      }
     }
+
     var resLength = result.length;
-    for(var i = 0; i < resLength; i++){
+    for(var i = 0; i < resLength; i++) {
       // a async delete does not delete the hidden .sass-cache dir
       fse.removeSync(path.join(srcDir, result[i]));
     }
@@ -113,16 +117,10 @@ CompassCompiler.prototype.updateCache = function (srcDir, destDir) {
   var cmdLine;
   var options = merge(true, this.options);
   var cmd = [options.compassCommand, 'compile'];
-  var cmdArgs = cmd.concat(this.files); //src is project dir or specified files
-  var cssDir = path.join(destDir, options.cssDir || '');
+  var cmdArgs = cmd.concat(this.files); // src is project dir or specified files
 
-  // make cssDir relative to destination where all files are copied to
-  // when a css dir is given.
-  // This should not really be necessary any longer since all is done in
-  // the src dir, need to test it first.
   if(options.cssDir){
-    cssDir = path.relative(destDir, cssDir);
-    options.cssDir = '"'+ cssDir + '"';
+    options.cssDir = '"'+ options.cssDir + '"';
   }
   cmdLine = cmdArgs.concat( dargs(options, ignoredOptions) ).join(' ');
 
