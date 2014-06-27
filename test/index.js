@@ -22,18 +22,19 @@ describe('broccoli-compass', function() {
     fse.ensureDirSync(destDir);
   });
 
-/*
-  afterEach(function() {
-    fse.remove(destDir, function(err) {
-      expect(err).to.equal(null);
-    });
+  /**
+   * Removes the Broccoli temp directory.
+   * set cleanup to false to leave tmp dir.
+   */
+  var cleanup = true;
+  after(function(){
+    if(cleanup){
+      var broccoliTempPath = path.normalize(path.join(__dirname, '../tmp'));
+      fse.removeSync(broccoliTempPath, function(err) {
+        expect(err).to.equal(null);
+      });
+    }
   });
-
-
-  afterEach(function(){
-    console.log('delete: ' + path.normalize(path.join(__dirname, '../tmp \n')));
-  });
-*/
 
   it('should contain all style relevant src tree files', function(){
     var tree = compassCompile(srcDir, defaultOptions);
