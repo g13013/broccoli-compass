@@ -12,14 +12,13 @@ var ignoredOptions = [
     ];
 
 /**
- *
- * @param cmdLine
- * @param options
+ * Executes the cmdLine statement in a Promise.
+ * @param cmdLine   The compass compile command line statement.
+ * @param options   The options for exec.
  * @returns {exports.Promise}
  */
 function compile(cmdLine, options) {
   return new rsvp.Promise(function(resolve, reject) {
-    console.log(cmdLine);
     exec(cmdLine, options, function(err, stdout, stderr) {
       if (err) {
         reject(err);
@@ -38,7 +37,6 @@ function compile(cmdLine, options) {
  * @returns Promise[] A collection promises for each directory or file that has to be copied.
  */
 function copyRelevant(srcDir, destDir, options) {
-  // problem with excluding the sass dir explicitly is that this is not going to work in
   var sassDir = options.sassDir || 'sass';
   var excludes = ['!' + sassDir + '/**'];
   var result = expand({ cwd: srcDir }, ['*'].concat(excludes));
@@ -55,11 +53,13 @@ function copyRelevant(srcDir, destDir, options) {
 
 /**
  * A promise to copy a directory or file.
+ * @param srcDir  The source directory to copy.
+ * @param destDir The destination to copy the srcDir contents to.
  */
-function copyDir(src, dest) {
+function copyDir(srcDir, destDir) {
   return new rsvp.Promise(function(resolve, reject){
     //console.log('copy ' + src);
-    fse.copy( src, dest,
+    fse.copy( srcDir, destDir,
       function(err) {
         if (err) {
           return reject(err);
@@ -95,6 +95,13 @@ function cleanupSource(srcDir, options) {
   });
 }
 
+/**
+ * broccoli-compass Constructor.
+ * @param inputTree   Any Broccoli tree.
+ * @param files       [Optional] An array of sass files to compile.
+ * @param options     The compass options.
+ * @returns {CompassCompiler}
+ */
 function CompassCompiler(inputTree, files, options) {
   if (arguments.length === 2 && files !== null && typeof files === 'object' && !(files instanceof Array)) {
     options = files;
@@ -141,7 +148,10 @@ CompassCompiler.prototype.updateCache = function (srcDir, destDir) {
   });
 };
 
-// Options are overwritten once used. This has to be merged on final options.
+/**
+ * Default options that are merged onto given options making sure these options
+ * are always set.
+ */
 CompassCompiler.prototype.defaultOptions = {
   relativeAssets: true,
   // this was overwriting compass which defaults to sass, which is rather confusing.

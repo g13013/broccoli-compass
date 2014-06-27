@@ -32,7 +32,7 @@ Command to execute compass.
 
 ### Compass Options
 
-Please refere to the [compass configuration](http://compass-style.org/help/tutorials/configuration-reference/) for more details about the available options
+Please refer to the [compass configuration](http://compass-style.org/help/tutorials/configuration-reference/) for more details about the available options
 
 
 ##License
