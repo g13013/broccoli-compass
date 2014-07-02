@@ -38,11 +38,11 @@ function compile(cmdLine, options) {
  */
 function copyRelevant(srcDir, destDir, options) {
   var sassDir = options.sassDir || 'sass';
-  var excludes = ['!' + sassDir + '/**'];
+  var excludes = ['!' + sassDir + '/**', '!.sass-cache'];
   var result = expand({ cwd: srcDir }, ['*'].concat(excludes));
   var resLength = result.length;
   var copyPromises = [];
-  for(var i = 0; i < resLength; i++){
+  for(var i = 0; i < resLength; i++) {
     copyPromises.push(
       copyDir(
         path.join(srcDir, result[i]),
@@ -57,7 +57,7 @@ function copyRelevant(srcDir, destDir, options) {
  * @param destDir The destination to copy the srcDir contents to.
  */
 function copyDir(srcDir, destDir) {
-  return new rsvp.Promise(function(resolve, reject){
+  return new rsvp.Promise(function(resolve, reject) {
     //console.log('copy ' + src);
     fse.copy( srcDir, destDir,
       function(err) {
@@ -76,10 +76,10 @@ function copyDir(srcDir, destDir) {
  * @param options The options used to call broccoli-compass.
  */
 function cleanupSource(srcDir, options) {
-  return new rsvp.Promise(function(resolve, reject){
-    var result = expand({ cwd: srcDir }, '**/*.css', '.sass-cache');
+  return new rsvp.Promise(function(resolve, reject) {
+    var result = expand({ cwd: srcDir }, '**/*.css');
     //Sanitize CSS dir
-    if(options.cssDir){
+    if(options.cssDir) {
       var cssDir = options.cssDir.replace(/"/g, '');
       if(cssDir && cssDir !== '.') {
         result.push(cssDir);
@@ -108,7 +108,7 @@ function CompassCompiler(inputTree, files, options) {
     files = [];
   }
 
-  if (!(this instanceof CompassCompiler)){
+  if (!(this instanceof CompassCompiler)) {
     return new CompassCompiler(inputTree, files, options);
   }
   this.inputTree = inputTree;
@@ -126,13 +126,13 @@ CompassCompiler.prototype.updateCache = function (srcDir, destDir) {
   var cmd = [options.compassCommand, 'compile'];
   var cmdArgs = cmd.concat(this.files); // src is project dir or specified files
 
-  if(options.cssDir){
+  if(options.cssDir) {
     options.cssDir = '"'+ options.cssDir + '"';
   }
   cmdLine = cmdArgs.concat( dargs(options, ignoredOptions) ).join(' ');
 
   return compile(cmdLine, {cwd: srcDir})
-  .then(function(){
+  .then(function() {
     return copyRelevant(srcDir, destDir, self.options);
   })
   .then(function() {

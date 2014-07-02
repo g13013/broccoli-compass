@@ -16,7 +16,7 @@ describe('broccoli-compass', function() {
   };
 
   var srcDir = __dirname + '/fixture/testSrcDir';
-  var destDir = path.join('test', 'tmp');
+  var destDir = ('/');
 
   beforeEach(function() {
     fse.ensureDirSync(destDir);
@@ -27,16 +27,17 @@ describe('broccoli-compass', function() {
    * set cleanup to false to leave tmp dir.
    */
   var cleanup = true;
-  after(function(){
+  after(function() {
     if(cleanup){
       var broccoliTempPath = path.normalize(path.join(__dirname, '../tmp'));
+      console.log('temppath: ' + broccoliTempPath);
       fse.removeSync(broccoliTempPath, function(err) {
         expect(err).to.equal(null);
       });
     }
   });
 
-  it('should contain all style relevant src tree files', function(){
+  it('should contain all style relevant src tree files', function() {
     var tree = compassCompile(srcDir, defaultOptions);
 
     var builder = new broccoli.Builder(tree);
@@ -80,7 +81,7 @@ describe('broccoli-compass', function() {
     var orgSassdir = path.join(srcDir, 'scss');
     var defaultSassdir = path.join(srcDir, 'sass');
     return renameDir(orgSassdir, defaultSassdir)
-      .then(function(){
+      .then(function() {
         var options = {
           cssDir: cssDir,
           imagesDir: 'img'
@@ -110,16 +111,16 @@ describe('broccoli-compass', function() {
       });
   });
 
-  it('should not have generated css content in the source directory', function(){
+  it('should not have generated css content in the source directory', function() {
     var tree = compassCompile(srcDir, defaultOptions);
     var builder = new broccoli.Builder(tree);
 
-    return builder.build().then(function(dir){
+    return builder.build().then(function(dir) {
       assertCssFilesExist(path.join(dir.directory, cssDir), false);
     });
   });
 
-  it('should remove only the css files from source when css dir is root', function(){
+  it('should remove only the css files from source when css dir is root', function() {
     var options = merge(defaultOptions, { cssDir: '.' });
     JSON.stringify(options);
     var tree = compassCompile(srcDir, options);
@@ -143,7 +144,7 @@ describe('broccoli-compass', function() {
   }
 
   function renameDir(from, to) {
-    return new rsvp.Promise(function(resolve, reject){
+    return new rsvp.Promise(function(resolve, reject) {
       fse.rename(from, to, function(err) {
         if(err) {
           console.log('error: ' + err);
