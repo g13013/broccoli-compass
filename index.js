@@ -132,20 +132,20 @@ CompassCompiler.prototype.updateCache = function (srcDir, destDir) {
   cmdLine = cmdArgs.concat( dargs(options, ignoredOptions) ).join(' ');
 
   return compile(cmdLine, {cwd: srcDir})
-  .then(function() {
-    return copyRelevant(srcDir, destDir, self.options);
-  })
-  .then(function() {
-    return cleanupSource(srcDir, options);
-  })
-  .then(function() {
-    return destDir;
-  }, function (err) {
-    msg = err.message || err;
-    console.log('[broccoli-compass] Error: ', msg + '\narguments: `' + cmdLine + '`');
-    // do not swallow error, can not test on failing execution.
-    throw err;
-  });
+    .then(function() {
+      return copyRelevant(srcDir, destDir, self.options);
+    })
+    .then(function() {
+      return cleanupSource(srcDir, options);
+    })
+    .then(function() {
+      return destDir;
+    }, function (err) {
+      msg = err.message || err;
+      console.log('[broccoli-compass] Error: ', msg + '\narguments: `' + cmdLine + '`');
+      // do not swallow error, can not test on failing execution.
+      throw err;
+    });
 };
 
 /**
