@@ -15,6 +15,8 @@ describe('broccoli-compass', function() {
     imagesDir: 'img'
   };
 
+  this.timeout(10000);
+
   var srcDir = __dirname + '/fixture/testSrcDir';
   var destDir = ('/');
 
