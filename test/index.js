@@ -32,7 +32,7 @@ describe('broccoli-compass', function() {
       var broccoliTempPath = path.normalize(path.join(__dirname, '../tmp'));
       console.log('temppath: ' + broccoliTempPath);
       fse.removeSync(broccoliTempPath, function(err) {
-        expect(err).to.equal(null);
+        expect(err, err.message).to.equal(null);
       });
     }
   });
@@ -73,7 +73,7 @@ describe('broccoli-compass', function() {
       var sassDir = path.join(dir.directory, 'scss');
       expect(fse.existsSync(sassDir), 'Sass source file directory').to.equal(false);
     }).then(null, function(err) {
-      expect(err).to.equal(null);
+      expect(err, err.message).to.equal(null);
     });
   });
 
@@ -107,7 +107,7 @@ describe('broccoli-compass', function() {
       null,
       function(err) { // finally
         renameDir(defaultSassdir, orgSassdir);
-        expect(err).to.equal(null);
+        expect(err, err && err.message).to.equal(null);
       });
   });
 
