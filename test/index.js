@@ -32,7 +32,6 @@ describe('broccoli-compass', function() {
   after(function() {
     if(cleanup){
       var broccoliTempPath = path.normalize(path.join(__dirname, '../tmp'));
-      console.log('temppath: ' + broccoliTempPath);
       fse.removeSync(broccoliTempPath, function(err) {
         expect(err, err.message).to.equal(null);
       });
