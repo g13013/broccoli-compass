@@ -66,7 +66,6 @@ function copyRelevant(srcDir, destDir, options) {
  */
 function copyDir(srcDir, destDir) {
   return new rsvp.Promise(function(resolve, reject) {
-    //console.log('copy ' + src);
     fse.copy( srcDir, destDir,
       function(err) {
         if (err) {
