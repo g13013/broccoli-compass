@@ -29,18 +29,19 @@ var compassTree = compileSass(tree, files, {
 ```
 if `files` is omitted the entire folder will be compiled.
 
-### Main Options
+##### Plugin Options
 
-#### `compassCommand`
+* **compassCommand**: Command to execute compass. default to `compass`
 
-Command to execute compass.
-
-**Default:** `compass`
-
-### Compass Options
+##### Compass Options
 
 Please refer to the [compass configuration](http://compass-style.org/help/tutorials/configuration-reference/) for more details about the available options
 
+
+## Credits
+* [Aboubakr Gasmi](https://github.com/g13013)
+* [Ferry de Boer](https://github.com/ferrydeboer) for his big contribution and for providing tests.
+* All the contributors.
 
 ##License
 [MIT](https://github.com/g13013/broccoli-compass/blob/master/LICENSE.md)
