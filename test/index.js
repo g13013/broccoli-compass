@@ -125,7 +125,6 @@ describe('broccoli-compass', function() {
 
   it('should remove only the css files from source when css dir is root', function() {
     var options = merge(defaultOptions, { cssDir: '.' });
-    JSON.stringify(options);
     var tree = compassCompile(srcDir, options);
 
     var builder = new broccoli.Builder(tree);
