@@ -31,7 +31,8 @@ if `files` is omitted the entire folder will be compiled.
 
 ##### Plugin Options
 
-* **compassCommand**: Command to execute compass. default to `compass`
+* **compassCommand**: Command to execute compass. Default to `compass`.
+* **ignoreErrors**: If set to `true`, Broccoli will only print the error instead of raising an exception. Default to `false`
 
 ##### Compass Options
 

@@ -3,7 +3,9 @@ var broccoli = require('broccoli');
 var fse = require('fs-extra');
 var path = require('path');
 var rsvp = require('rsvp');
-var expect = require('chai').expect;
+var chai = require('chai');
+var assert = chai.assert;
+var expect = chai.expect;
 var merge = require('merge');
 
 describe('broccoli-compass', function() {
@@ -131,6 +133,31 @@ describe('broccoli-compass', function() {
       assertCssFilesExist(dir.directory);
       // just check a single dir if its still there
       expect(fse.existsSync(path.join(dir.directory, 'img')), 'source images dir').to.equal(true);
+    });
+  });
+
+  it('should ignore errors when ignoreErrors is set to TRUE', function() {
+    var options = merge(defaultOptions, { cssDir: '.', compassCommand: 'notExistantTool' });
+    var tree = compassCompile(srcDir, options);
+
+    var builder = new broccoli.Builder(tree);
+    builder.build().then(function () {
+      assert.notOk(true, 'Should not raise errors');
+    }, function(err) {
+      assert.ok(err, 'Should not raise errors');
+    });
+  });
+
+  it('should raise errors when ignoreErrors is set to FALSE', function() {
+    //console.log('yeah', done);
+    var options = merge(defaultOptions, { cssDir: '.', compassCommand: 'notExistantTool', ignoreErrors: true });
+    var tree = compassCompile(srcDir, options);
+
+    var builder = new broccoli.Builder(tree);
+    builder.build().then(function () {
+      assert.ok(true, 'Should raise errors');
+    }, function(err) {
+      assert.notOk(err, 'Should raise errors');
     });
   });
 

@@ -8,7 +8,8 @@ var fse = require('fs-extra');
 var expand = require('glob-expand');
 
 var ignoredOptions = [
-      'compassCommand'
+      'compassCommand',
+      'ignoreErrors'
     ];
 
 /**
@@ -149,9 +150,11 @@ CompassCompiler.prototype.updateCache = function (srcDir, destDir) {
       return destDir;
     }, function (err) {
       msg = err.message || err;
-      console.log('[broccoli-compass] Error: ', msg + '\narguments: `' + cmdLine + '`');
-      // do not swallow error, can not test on failing execution.
-      throw err;
+      if (options.ignoreErrors === false) {
+        throw err;
+      } else {
+        console.log('[broccoli-compass] Error: ', msg + '\narguments: `' + cmdLine + '`');
+      }
     });
 };
 
@@ -163,6 +166,7 @@ CompassCompiler.prototype.defaultOptions = {
   relativeAssets: true,
   // this was overwriting compass which defaults to sass, which is rather confusing.
   sassDir: 'sass',
+  ignoreErrors: false,
   compassCommand: 'compass'
 };
 
