@@ -37,12 +37,20 @@ function compile(cmdLine, options) {
  * @returns Promise[] A collection promises for each directory or file that has to be copied.
  */
 function copyRelevant(srcDir, destDir, options) {
-  var sassDir = options.sassDir || 'sass';
-  var excludes = ['!' + sassDir + '/**', '!.sass-cache'];
-  var result = expand({ cwd: srcDir }, ['*'].concat(excludes));
-  var resLength = result.length;
+  var result;
+  var sassDir = options.sassDir || 'scss';
+  var excludes = ['!.sass-cache'];
   var copyPromises = [];
-  for(var i = 0; i < resLength; i++) {
+
+  //if sassDir is the same as srcDir we just exclude scss/sass files. Otherwise all the sassDir
+  if (!path.relative(srcDir, sassDir)) {
+    excludes.push('!' + sassDir + '/**/*.{scss,sass}');
+  } else {
+    excludes.push('!' + sassDir + '/**');
+  }
+
+  result = expand({ cwd: srcDir, filter: 'isFile'}, ['**/*'].concat(excludes));
+  for(var i = 0; i < result.length; i++) {
     copyPromises.push(
       copyDir(
         path.join(srcDir, result[i]),
