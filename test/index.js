@@ -7,8 +7,8 @@ var expect = require('chai').expect;
 var merge = require('merge');
 
 describe('broccoli-compass', function() {
-  const cssDir = 'css';
-  const sassDir = 'scss';
+  var cssDir = 'css';
+  var sassDir = 'scss';
   var defaultOptions = {
     cssDir: cssDir,
     sassDir: sassDir,
@@ -49,13 +49,13 @@ describe('broccoli-compass', function() {
       var srcCssFile = path.join(dir.graph.tree.inputTree, cssFile);
       expect(fse.existsSync(srcCssFile), 'Source CssFile').to.equal(false);
 
-      const fontsDir = path.join(dir.directory, 'fonts');
+      var fontsDir = path.join(dir.directory, 'fonts');
       expect(
         fse.existsSync(path.join(fontsDir, 'stub.ttf')),
         'Fonts directory'
       ).to.equal(true);
 
-      const imgDir = path.join(dir.directory, 'img');
+      var imgDir = path.join(dir.directory, 'img');
       expect(
         fse.existsSync(path.join(imgDir, 'stub.png')),
         'Images directory'
