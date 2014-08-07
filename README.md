@@ -9,6 +9,13 @@ Compiles compass project using [compass](https://github.com/chriseppstein/compas
 npm install --save-dev broccoli-compass
 ```
 
+## Tests
+
+```bash
+npm install
+npm test
+```
+
 ## Usage
 
 Note: The API might change in subsequent 0.x versions.
