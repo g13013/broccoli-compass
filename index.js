@@ -39,7 +39,7 @@ function compile(cmdLine, options) {
  */
 function copyRelevant(srcDir, destDir, options) {
   var result;
-  var sassDir = options.sassDir || 'scss';
+  var sassDir = options.sassDir;
   var excludes = ['!.sass-cache'];
   var copyPromises = [];
 
