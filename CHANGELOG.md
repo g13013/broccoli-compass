@@ -1,3 +1,8 @@
+### 0.0.8
+* Added tests
+* Fixed the issue with relative paths pointing to tmp directories, see [issue](https://github.com/g13013/broccoli-compass/issues/7)
+* Added ignoreErrors option
+
 ### 0.0.7
 * Use `dargs` module in place of builtin generateArgs function
 * Use `merge` module in place of builtin merge function
