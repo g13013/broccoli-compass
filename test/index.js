@@ -17,7 +17,7 @@ describe('broccoli-compass', function() {
     imagesDir: 'img'
   };
 
-  this.timeout(10000);
+  this.timeout(20000);
 
   var srcDir = __dirname + '/fixture/testSrcDir';
   var destDir = ('/');
@@ -66,7 +66,7 @@ describe('broccoli-compass', function() {
     });
   });
 
-  it('should not have sass related content in the destination directory', function(){
+  it('should not have sass related content in the destination directory', function(done){
     var tree = compassCompile(srcDir, defaultOptions);
 
     var builder = new broccoli.Builder(tree);
@@ -75,12 +75,11 @@ describe('broccoli-compass', function() {
       expect(fse.existsSync(cacheDir), 'Sass cache directory').to.equal(false);
       var sassDir = path.join(dir.directory, 'scss');
       expect(fse.existsSync(sassDir), 'Sass source file directory').to.equal(false);
-    }).then(null, function(err) {
-      expect(err, err.message).to.equal(null);
-    });
+      done();
+    }).then(null, done);
   });
 
-  it('should delete default sass directory when none given', function(){
+  it('should delete default sass directory when none given', function(done){
     var orgSassdir = path.join(srcDir, 'scss');
     var defaultSassdir = path.join(srcDir, 'sass');
     return renameDir(orgSassdir, defaultSassdir)
@@ -104,14 +103,10 @@ describe('broccoli-compass', function() {
           fse.existsSync(sassDir),
           'Sass source file directory')
           .to.equal(false);
+        done();
       }).then(function() {
         return renameDir(defaultSassdir, orgSassdir);
-      }).then(
-      null,
-      function(err) { // finally
-        renameDir(defaultSassdir, orgSassdir);
-        expect(err, err && err.message).to.equal(null);
-      });
+      }).then(null, done);
   });
 
   it('should not have generated css content in the source directory', function() {
