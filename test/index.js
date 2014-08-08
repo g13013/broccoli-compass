@@ -103,9 +103,8 @@ describe('broccoli-compass', function() {
           fse.existsSync(sassDir),
           'Sass source file directory')
           .to.equal(false);
+        renameDir(defaultSassdir, orgSassdir);
         done();
-      }).then(function() {
-        return renameDir(defaultSassdir, orgSassdir);
       }).then(null, done);
   });
 
