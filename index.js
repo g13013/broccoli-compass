@@ -40,17 +40,16 @@ function compile(cmdLine, options) {
 function copyRelevant(srcDir, destDir, options) {
   var result;
   var sassDir = options.sassDir;
-  var excludes = ['!.sass-cache'];
+  var excludes = ['!.sass-cache/**'];
   var copyPromises = [];
 
   //if sassDir is the same as srcDir we just exclude scss/sass files. Otherwise all the sassDir
-  if (!path.relative(srcDir, sassDir)) {
-    excludes.push('!' + sassDir + '/**/*.{scss,sass}');
+  if (sassDir === '.') {
+    excludes.push('!**/*.{scss,sass}');
   } else {
     excludes.push('!' + sassDir + '/**');
   }
-
-  result = expand({ cwd: srcDir, filter: 'isFile'}, ['**/*'].concat(excludes));
+  result = expand({ cwd: srcDir, dot:true, filter: 'isFile'}, ['**/*'].concat(excludes));
   for(var i = 0; i < result.length; i++) {
     copyPromises.push(
       copyDir(
