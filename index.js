@@ -22,6 +22,13 @@ function compile(cmdLine, options) {
   return new rsvp.Promise(function(resolve, reject) {
     exec(cmdLine, options, function(err, stdout, stderr) {
       if (err) {
+        // Provide a robust error message in case of failure.
+        // compass sends errors to sdtout, so it's important to include that
+        err.message = "[broccoli-compass] failed while executing compass command line\n" +
+                      "[broccoli-compass] Working directory:\n" + options.cwd + "\n" +
+                      "[broccoli-compass] Executed:\n" + cmdLine + "\n" +
+                      "[broccoli-compass] stdout:\n" + stdout + "\n" +
+                      "[broccoli-compass] stderr:\n" + stderr + "\n";
         reject(err);
       }
       resolve();
@@ -152,7 +159,7 @@ CompassCompiler.prototype.updateCache = function (srcDir, destDir) {
       if (options.ignoreErrors === false) {
         throw err;
       } else {
-        console.log('[broccoli-compass] Error: ', msg + '\narguments: `' + cmdLine + '`');
+        console.log(msg);
       }
     });
 };
