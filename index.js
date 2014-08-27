@@ -54,7 +54,7 @@ function copyRelevant(srcDir, destDir, options) {
   if (sassDir === '.') {
     excludes.push('!**/*.{scss,sass}');
   } else {
-    excludes.push('!' + sassDir + '/**');
+    excludes.push('!' + sassDir + '/**.{scss,sass}');
   }
   result = expand({ cwd: srcDir, dot:true, filter: 'isFile'}, ['**/*'].concat(excludes));
   for(var i = 0; i < result.length; i++) {
