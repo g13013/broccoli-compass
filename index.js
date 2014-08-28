@@ -47,12 +47,12 @@ function compile(cmdLine, options) {
 function copyRelevant(srcDir, destDir, options) {
   var result;
   var sassDir = options.sassDir;
-  var cssDir = options.cssDir;
+  var cssDir = options.cssDir.replace(/"/, '');
   var excludes = ['!.sass-cache/**'];
   var copyPromises = [];
 
-  //if sassDir is the same as srcDir we just exclude scss/sass files. Otherwise all the sassDir
-  if (sassDir === '.' || sassDir === cssDir.replace(/"/, '')) {
+  //if sassDir is the same as srcDir or cssDir we just exclude scss/sass files. Otherwise all the sassDir
+  if (sassDir === '.' || sassDir === cssDir) {
     excludes.push('!**/*.{scss,sass}');
   } else {
     excludes.push('!' + sassDir + '/**');
