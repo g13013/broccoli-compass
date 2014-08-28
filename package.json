@@ -26,7 +26,7 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "dependencies": {
-    "broccoli-caching-writer": "~0.3.1",
+    "broccoli-caching-writer": "~0.4.0",
     "broccoli-static-compiler": "^0.1.4",
     "dargs": "^0.1.0",
     "merge": "^1.1.3",
