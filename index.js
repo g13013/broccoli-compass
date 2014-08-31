@@ -170,9 +170,7 @@ CompassCompiler.prototype.updateCache = function (srcDir, destDir) {
  * are always set.
  */
 CompassCompiler.prototype.defaultOptions = {
-  relativeAssets: true,
-  // this was overwriting compass which defaults to sass, which is rather confusing.
-  sassDir: 'sass',
+  // plugin options
   ignoreErrors: false,
   compassCommand: 'compass'
 };
