@@ -93,7 +93,6 @@ function copyDir(srcDir, destDir) {
 function cleanupSource(srcDir, options) {
   return new rsvp.Promise(function(resolve, reject) {
     var result = expand({ cwd: srcDir }, '**/*.css');
-    //Sanitize CSS dir
     if(options.cssDir) {
       var cssDir = options.cssDir;
       if(cssDir && cssDir !== '.') {
@@ -130,20 +129,21 @@ function CompassCompiler(inputTree, files, options) {
   this.files = [].concat(files || []);
   this.options = merge(true, this.defaultOptions);
   merge(this.options, options);
+  this.generateCmdLine();
 }
 
 CompassCompiler.prototype = Object.create(Writer.prototype);
 CompassCompiler.prototype.constructor = CompassCompiler;
+CompassCompiler.prototype.generateCmdLine = function () {
+  var cmd = [this.options.compassCommand, 'compile'];
+  var cmdArgs = cmd.concat(this.files); // src is project dir or specified files
+  this.cmdLine = cmdArgs.concat( dargs(this.options, ignoredOptions) ).join(' ');
+};
 CompassCompiler.prototype.updateCache = function (srcDir, destDir) {
   var self = this;
-  var cmdLine;
-  var options = merge(true, this.options);
-  var cmd = [options.compassCommand, 'compile'];
-  var cmdArgs = cmd.concat(this.files); // src is project dir or specified files
+  var options = this.options;
 
-  cmdLine = cmdArgs.concat( dargs(options, ignoredOptions) ).join(' ');
-
-  return compile(cmdLine, {cwd: srcDir})
+  return compile(this.cmdLine, {cwd: srcDir})
     .then(function() {
       return copyRelevant(srcDir, destDir, self.options);
     })
