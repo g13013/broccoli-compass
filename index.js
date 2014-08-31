@@ -47,7 +47,7 @@ function compile(cmdLine, options) {
 function copyRelevant(srcDir, destDir, options) {
   var result;
   var sassDir = options.sassDir;
-  var cssDir = options.cssDir.replace(/"/, '');
+  var cssDir = options.cssDir;
   var excludes = ['!.sass-cache/**'];
   var copyPromises = [];
 
@@ -95,7 +95,7 @@ function cleanupSource(srcDir, options) {
     var result = expand({ cwd: srcDir }, '**/*.css');
     //Sanitize CSS dir
     if(options.cssDir) {
-      var cssDir = options.cssDir.replace(/"/g, '');
+      var cssDir = options.cssDir;
       if(cssDir && cssDir !== '.') {
         result.push(cssDir);
       }
@@ -141,9 +141,6 @@ CompassCompiler.prototype.updateCache = function (srcDir, destDir) {
   var cmd = [options.compassCommand, 'compile'];
   var cmdArgs = cmd.concat(this.files); // src is project dir or specified files
 
-  if(options.cssDir) {
-    options.cssDir = '"'+ options.cssDir + '"';
-  }
   cmdLine = cmdArgs.concat( dargs(options, ignoredOptions) ).join(' ');
 
   return compile(cmdLine, {cwd: srcDir})
