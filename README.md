@@ -23,7 +23,8 @@ Note: The API might change in subsequent 0.x versions.
 ```js
 var compileSass = require('broccoli-compass');
 var compassTree = compileSass(tree, files, {
-    outputStyle: 'expanded' //include here compass options. Note: some options might be ignored as they are automatically filled
+    exclude: ['tmp/**'],
+    outputStyle: 'expanded'
   });
 
 ```
@@ -33,6 +34,7 @@ if `files` is omitted the entire folder will be compiled.
 
 * **compassCommand**: Command to execute compass. Default to `compass`.
 * **ignoreErrors**: If set to `true`, Broccoli will only print the error instead of raising an exception. Default to `false`
+* **exclude**: list of glob patterns used to exlude files when copying files from source to destination folder after compile.
 
 ##### Compass Options
 

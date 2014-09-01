@@ -9,7 +9,8 @@ var expand = require('glob-expand');
 
 var ignoredOptions = [
       'compassCommand',
-      'ignoreErrors'
+      'ignoreErrors',
+      'exclude'
     ];
 
 /**
@@ -46,18 +47,9 @@ function compile(cmdLine, options) {
  */
 function copyRelevant(srcDir, destDir, options) {
   var result;
-  var sassDir = options.sassDir;
-  var cssDir = options.cssDir;
-  var excludes = ['!.sass-cache/**'];
   var copyPromises = [];
 
-  //if sassDir is the same as srcDir or cssDir we just exclude scss/sass files. Otherwise all the sassDir
-  if (sassDir === '.' || sassDir === cssDir) {
-    excludes.push('!**/*.{scss,sass}');
-  } else {
-    excludes.push('!' + sassDir + '/**');
-  }
-  result = expand({ cwd: srcDir, dot:true, filter: 'isFile'}, ['**/*'].concat(excludes));
+  result = expand({ cwd: srcDir, dot:true, filter: 'isFile'}, ['**/*'].concat(options.exclude));
   for(var i = 0; i < result.length; i++) {
     copyPromises.push(
       copyDir(
@@ -125,10 +117,31 @@ function CompassCompiler(inputTree, files, options) {
   if (!(this instanceof CompassCompiler)) {
     return new CompassCompiler(inputTree, files, options);
   }
+
+  var sassDir = options.sassDir;
+  var cssDir = options.cssDir;
+  var exclude = ['!.sass-cache/**'];
+
   this.inputTree = inputTree;
   this.files = [].concat(files || []);
   this.options = merge(true, this.defaultOptions);
   merge(this.options, options);
+
+  //if sassDir is the same as srcDir or cssDir we just exclude scss/sass files. Otherwise all the sassDir
+  if (sassDir === '.' || sassDir === cssDir) {
+    exclude.push('!**/*.{scss,sass}');
+  } else {
+    exclude.push('!' + sassDir + '/**');
+  }
+
+  if (Array.isArray(options.exclude)) {
+    this.options.exclude = options.exclude.map(function (pattern) {
+      return '!' + pattern;
+    }).concat(exclude);
+  } else {
+    this.options.exclude = exclude;
+  }
+
   this.generateCmdLine();
 }
 

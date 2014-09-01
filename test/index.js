@@ -66,6 +66,22 @@ describe('broccoli-compass', function() {
     });
   });
 
+
+  it('should exclude files defined by options.exclude', function() {
+    var options = Object.create(defaultOptions);
+    options.exclude = ['fonts/**'];
+    var tree = compassCompile(srcDir, options);
+
+    var builder = new broccoli.Builder(tree);
+    return builder.build().then(function(dir) {
+      var fontsDir = path.join(dir.directory, 'fonts');
+      expect(
+        fse.existsSync(fontsDir),
+        'Fonts directory'
+      ).to.equal(false);
+    });
+  });
+
   it('should not have sass related content in the destination directory', function(done){
     var tree = compassCompile(srcDir, defaultOptions);
 
