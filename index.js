@@ -10,8 +10,11 @@ var expand = require('glob-expand');
 var ignoredOptions = [
       'compassCommand',
       'ignoreErrors',
-      'exclude'
+      'exclude',
+      'files'
     ];
+
+//TODO: collect sass/scss on construct to build the list css generated files for copy.
 
 /**
  * Executes the cmdLine statement in a Promise.
@@ -109,13 +112,15 @@ function cleanupSource(srcDir, options) {
  * @returns {CompassCompiler}
  */
 function CompassCompiler(inputTree, files, options) {
-  if (arguments.length === 2 && files !== null && typeof files === 'object' && !(files instanceof Array)) {
-    options = files;
-    files = [];
+  options = arguments.length > 2 ? (options || {}) : (files || {});
+  if (arguments.length > 2) {
+    console.log('DEPRECATION: passing files to broccoli-compass constructor as second parameter is deprecated, ' +
+                'use options.files instead');
+    options.files = files;
   }
 
   if (!(this instanceof CompassCompiler)) {
-    return new CompassCompiler(inputTree, files, options);
+    return new CompassCompiler(inputTree, options);
   }
 
   var sassDir = options.sassDir;
@@ -123,7 +128,6 @@ function CompassCompiler(inputTree, files, options) {
   var exclude = ['!.sass-cache/**'];
 
   this.inputTree = inputTree;
-  this.files = [].concat(files || []);
   this.options = merge(true, this.defaultOptions);
   merge(this.options, options);
 
@@ -149,7 +153,7 @@ CompassCompiler.prototype = Object.create(Writer.prototype);
 CompassCompiler.prototype.constructor = CompassCompiler;
 CompassCompiler.prototype.generateCmdLine = function () {
   var cmd = [this.options.compassCommand, 'compile'];
-  var cmdArgs = cmd.concat(this.files); // src is project dir or specified files
+  var cmdArgs = cmd.concat(this.options.files); // specefic files to compile
   this.cmdLine = cmdArgs.concat( dargs(this.options, ignoredOptions) ).join(' ');
 };
 CompassCompiler.prototype.updateCache = function (srcDir, destDir) {

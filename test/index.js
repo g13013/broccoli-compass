@@ -8,6 +8,8 @@ var assert = chai.assert;
 var expect = chai.expect;
 var merge = require('merge');
 
+//TODO: add test for files options
+
 describe('broccoli-compass', function() {
   var cssDir = 'css';
   var sassDir = 'scss';
@@ -162,7 +164,6 @@ describe('broccoli-compass', function() {
   });
 
   it('should raise errors when ignoreErrors is set to FALSE', function() {
-    //console.log('yeah', done);
     var options = merge(defaultOptions, { cssDir: '.', compassCommand: 'notExistantTool', ignoreErrors: true });
     var tree = compassCompile(srcDir, options);
 
