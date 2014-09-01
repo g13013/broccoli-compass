@@ -1,3 +1,12 @@
+### 0.1.0
+* The compass command line is now generated only one time on construct and is available via `cmdLine` property.
+* Added "exclude" option.
+* Update `broccoli-caching-writer` to version `~0.4.0`.
+* Add more details to reported compass errors.
+* [DEPRECATION] escaping cssDir spaces when generating compass command line (need more general escaping fo all values)
+* [DEPRECATION] deprecate passing files to compile as second parameter, now it's part of options object.
+* [BUG] Fixed a bug preventing css files from being copied when cssDir is the same as sassDir.
+
 ### 0.0.9
 * Include dot files when moving files to dest directory.
 * Fixed a regression on tests.
