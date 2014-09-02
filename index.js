@@ -153,7 +153,7 @@ CompassCompiler.prototype = Object.create(Writer.prototype);
 CompassCompiler.prototype.constructor = CompassCompiler;
 CompassCompiler.prototype.generateCmdLine = function () {
   var cmd = [this.options.compassCommand, 'compile'];
-  var cmdArgs = cmd.concat(this.options.files); // specefic files to compile
+  var cmdArgs = cmd.concat(this.options.files); // specific files to compile
   this.cmdLine = cmdArgs.concat( dargs(this.options, ignoredOptions) ).join(' ');
 };
 CompassCompiler.prototype.updateCache = function (srcDir, destDir) {
