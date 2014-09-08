@@ -170,7 +170,7 @@ CompassCompiler.prototype.updateCache = function (srcDir, destDir) {
     .then(function() {
       return destDir;
     }, function (err) {
-      msg = err.message || err;
+      var msg = err.message || err;
       if (options.ignoreErrors === false) {
         throw err;
       } else {
