@@ -28,11 +28,11 @@ function compile(cmdLine, options) {
       if (err) {
         // Provide a robust error message in case of failure.
         // compass sends errors to sdtout, so it's important to include that
-        err.message = "[broccoli-compass] failed while executing compass command line\n" +
-                      "[broccoli-compass] Working directory:\n" + options.cwd + "\n" +
-                      "[broccoli-compass] Executed:\n" + cmdLine + "\n" +
-                      "[broccoli-compass] stdout:\n" + stdout + "\n" +
-                      "[broccoli-compass] stderr:\n" + stderr + "\n";
+        err.message = '[broccoli-compass] failed while executing compass command line\n' +
+                      '[broccoli-compass] Working directory:\n' + options.cwd + '\n' +
+                      '[broccoli-compass] Executed:\n' + cmdLine + '\n' +
+                      '[broccoli-compass] stdout:\n' + stdout + '\n' +
+                      '[broccoli-compass] stderr:\n' + stderr + '\n';
         reject(err);
       }
       resolve();
@@ -86,7 +86,7 @@ function copyDir(srcDir, destDir) {
  * @param options The options used to call broccoli-compass.
  */
 function cleanupSource(srcDir, options) {
-  return new rsvp.Promise(function(resolve, reject) {
+  return new rsvp.Promise(function(resolve) {
     var result = expand({ cwd: srcDir }, '**/*.css');
     if(options.cssDir) {
       var cssDir = options.cssDir;
