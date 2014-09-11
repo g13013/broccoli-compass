@@ -1,3 +1,7 @@
+### 0.1.1
+* Added .jshintrc file.
+* Updated `broccoli-caching-writer` to `0.4.2` that fixes an important bug, see [PR](https://github.com/rwjblue/broccoli-caching-writer/pull/7).
+
 ### 0.1.0
 * The compass command line is now generated only one time on construct and is available via `cmdLine` property.
 * Added "exclude" option.
