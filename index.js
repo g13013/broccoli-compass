@@ -157,12 +157,11 @@ CompassCompiler.prototype.generateCmdLine = function () {
   this.cmdLine = cmdArgs.concat( dargs(this.options, ignoredOptions) ).join(' ');
 };
 CompassCompiler.prototype.updateCache = function (srcDir, destDir) {
-  var self = this;
   var options = this.options;
 
   return compile(this.cmdLine, {cwd: srcDir})
     .then(function() {
-      return copyRelevant(srcDir, destDir, self.options);
+      return copyRelevant(srcDir, destDir, options);
     })
     .then(function() {
       return cleanupSource(srcDir, options);
