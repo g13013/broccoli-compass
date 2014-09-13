@@ -33,8 +33,10 @@ function compile(cmdLine, options) {
                       '[broccoli-compass] Executed:\n' + cmdLine + '\n' +
                       '[broccoli-compass] stdout:\n' + stdout + '\n' +
                       '[broccoli-compass] stderr:\n' + stderr + '\n';
-        reject(err);
+
+        return reject(err);
       }
+
       resolve();
     });
   });
