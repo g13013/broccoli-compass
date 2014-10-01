@@ -11,7 +11,8 @@ var ignoredOptions = [
       'compassCommand',
       'ignoreErrors',
       'exclude',
-      'files'
+      'files',
+      'filterFromCache'
     ];
 
 //TODO: collect sass/scss on construct to build the list css generated files for copy.
