@@ -11,7 +11,8 @@ var ignoredOptions = [
       'compassCommand',
       'ignoreErrors',
       'exclude',
-      'files'
+      'files',
+      'filterFromCache'
     ];
 
 //TODO: collect sass/scss on construct to build the list css generated files for copy.
@@ -129,7 +130,6 @@ function CompassCompiler(inputTree, files, options) {
   var cssDir = options.cssDir;
   var exclude = ['!.sass-cache/**'];
 
-  this.inputTree = inputTree;
   this.options = merge(true, this.defaultOptions);
   merge(this.options, options);
 
@@ -149,6 +149,9 @@ function CompassCompiler(inputTree, files, options) {
   }
 
   this.generateCmdLine();
+
+  // Call "super" (the broccoli-caching-writer constructor)
+  Writer.call(this, inputTree, this.options);
 }
 
 CompassCompiler.prototype = Object.create(Writer.prototype);
