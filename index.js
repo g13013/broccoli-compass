@@ -126,12 +126,13 @@ function CompassCompiler(inputTree, files, options) {
     return new CompassCompiler(inputTree, options);
   }
 
-  var sassDir = options.sassDir;
-  var cssDir = options.cssDir;
   var exclude = ['!.sass-cache/**'];
 
   this.options = merge(true, this.defaultOptions);
   merge(this.options, options);
+  options = this.options;
+  var sassDir = options.sassDir;
+  var cssDir = options.cssDir;
 
   //if sassDir is the same as srcDir or cssDir we just exclude scss/sass files. Otherwise all the sassDir
   if (sassDir === '.' || sassDir === cssDir) {
