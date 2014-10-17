@@ -1,0 +1,11 @@
+@import "compass";
+@include font-face("My Font", font-files("MyFont.ttf", "MyFont.otf", "MyFont.svg", "MyFont.woff"), "MyFont.eot");
+$icons: sprite-map("icons/*.png");
+.selector1 {
+	font: "My Font" arial;
+	background: sprite($icons, "arrow_right_grey") no-repeat;
+}
+
+.selector2 {
+	background: image-url("arrow_right_grey.png") no-repeat;
+}
