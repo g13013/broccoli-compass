@@ -158,9 +158,24 @@ function CompassCompiler(inputTree, files, options) {
 CompassCompiler.prototype = Object.create(Writer.prototype);
 CompassCompiler.prototype.constructor = CompassCompiler;
 CompassCompiler.prototype.generateCmdLine = function () {
-  var cmd = [this.options.compassCommand, 'compile'];
+  var value;
+  var filtredOptions = {};
+  var options = this.options;
+  var cmd = [options.compassCommand, 'compile'];
   var cmdArgs = cmd.concat(this.options.files); // specific files to compile
-  this.cmdLine = cmdArgs.concat( dargs(this.options, ignoredOptions) ).join(' ');
+  // dargs doesn't escape spaces, we filter and escape before using it ;(
+  for (var key in options) {
+    if (ignoredOptions.indexOf(key) !== -1) { continue; }
+    value = options[key];
+    if (typeof value === 'string' && value.indexOf(' ') !== -1) {
+      filtredOptions[key] = '"' + value + '"';
+      continue;
+    }
+    filtredOptions[key] = value;
+  }
+
+  this.cmdLine = cmdArgs.concat( dargs(filtredOptions) ).join(' ');
+  return this.cmdLine;
 };
 CompassCompiler.prototype.updateCache = function (srcDir, destDir) {
   var options = this.options;
