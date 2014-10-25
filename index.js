@@ -117,7 +117,7 @@ function cleanupSource(srcDir, options) {
 function CompassCompiler(inputTree, files, options) {
   options = arguments.length > 2 ? (options || {}) : (files || {});
   if (arguments.length > 2) {
-    console.log('DEPRECATION: passing files to broccoli-compass constructor as second parameter is deprecated, ' +
+    console.log('[broccoli-compass] DEPRECATION: passing files to broccoli-compass constructor as second parameter is deprecated, ' +
                 'use options.files instead');
     options.files = files;
   }
@@ -126,7 +126,9 @@ function CompassCompiler(inputTree, files, options) {
     return new CompassCompiler(inputTree, options);
   }
 
-  var exclude = ['!.sass-cache/**'];
+  if (options.exclude) {
+    console.log('[broccoli-compass] DEPRECATION: The exclude option has been deprecated in favour of the `cleanOutput` option');
+  }
 
   this.options = merge(true, this.defaultOptions);
   merge(this.options, options);
