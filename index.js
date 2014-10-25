@@ -1,18 +1,21 @@
 var path = require('path');
 var exec = require('child_process').exec;
+var quickTemp = require('quick-temp');
+var symlinkOrCopy = require('symlink-or-copy').sync;
 var merge = require('merge');
 var dargs = require('dargs');
-var Writer = require('broccoli-caching-writer');
+var Writer = require('broccoli-writer');
+var walkCachedSync = require('./lib/walk_cached_sync');
+var mkdirp = require('mkdirp').sync;
 var rsvp = require('rsvp');
-var fse = require('fs-extra');
-var expand = require('glob-expand');
+var fs = require('fs');
+var urlRe = /url\('((?:\/|.{2})?[^\?\)']+)/g;
 
 var ignoredOptions = [
       'compassCommand',
       'ignoreErrors',
-      'exclude',
-      'files',
-      'filterFromCache'
+      'cleanOutput',
+      'files'
     ];
 
 //TODO: collect sass/scss on construct to build the list css generated files for copy.
@@ -44,67 +47,70 @@ function compile(cmdLine, options) {
 }
 
 /**
- * Copies all files except for the sass(-cache) files. Basically that is everything
- * that can be deployed further.
- * @param srcDir  The source directory where compass ran.
- * @param destDir The Broccoli destination directory
- * @param options The options used to call broccoli-compass.
- * @returns Promise[] A collection promises for each directory or file that has to be copied.
+ * Walks the tree and looks for css files under css directory, if `cleanOutput` is TRUE, css content is read to extract
+ * images and fonts paths to add them to the queue. Note that this function simply return srcDir if `cleanOutput` is false.
+ *
+ * @param  {String} srcDir  Source directory
+ * @param  {String} destDir Destination
  */
-function copyRelevant(srcDir, destDir, options) {
-  var result;
-  var copyPromises = [];
-
-  result = expand({ cwd: srcDir, dot:true, filter: 'isFile'}, ['**/*'].concat(options.exclude));
-  for(var i = 0; i < result.length; i++) {
-    copyPromises.push(
-      copyDir(
-        path.join(srcDir, result[i]),
-        path.join(destDir, result[i])));
+function moveToDest(srcDir, destDir) {
+  if (!this.options.cleanOutput) {
+    return srcDir;
   }
-  return rsvp.all(copyPromises);
+  var content, cssDir, src;
+  var copiedCache = this.copiedCache || {};
+  var copied = {};
+  var options = this.options;
+  var tree = this.walkDir(srcDir, {cache: this.cache, ignore: /^\.sass-cache/});
+  var cache = tree.paths;
+  var generated = tree.changed;
+  var linkedFiles = [];
+  for (var i = 0; i < generated.length; i += 1) {
+    file = generated[i];
+    if (file.substr(-1) !== '/' && copiedCache[file] !== cache[file].statsHash) {
+      if (file.substr(-4) !== '.css') {
+        continue;
+      }
+      copied[file] = cache[file];
+      src = srcDir + '/' + file;
+      content = fs.readFileSync(src);
+      cssDir = path.dirname(file);
+      while ((linkedFile = urlRe.exec(content))) {
+        //Note: linked files are relative to srcDir
+        linkedFiles.push( path.normalize(cssDir + '/' + linkedFile[1]) );
+      }
+      mkdirp(destDir + '/' + path.dirname(file));
+      symlinkOrCopy(src, destDir + '/' + file);
+    }
+  }
+
+  for (i = 0; i < linkedFiles.length; i += 1) {
+    file = linkedFiles[i];
+    if (file in copied) { continue; }
+    if (!cache[file] || copiedCache[file] !== cache[file].statsHash) {
+      copied[file] = cache[file] && cache[file].statsHash;
+      mkdirp(destDir + '/' + path.dirname(file));
+      symlinkOrCopy(srcDir + '/' + file, destDir + '/' + file);
+    }
+  }
+  this.copiedCache = copied;
+  return destDir;
 }
 
 /**
- * A promise to copy a directory or file.
- * @param srcDir  The source directory to copy.
- * @param destDir The destination to copy the srcDir contents to.
+ * Symlink files in the root directory of source into destination, this will avoid pulluting source directory
+ * with files generated at compile time.
+ * 
+ * @param  {String} source      Source directory
+ * @param  {String} destination Destination directory
  */
-function copyDir(srcDir, destDir) {
-  return new rsvp.Promise(function(resolve, reject) {
-    fse.copy( srcDir, destDir,
-      function(err) {
-        if (err) {
-          return reject(err);
-        }
-
-        resolve();
-      }
-    );
-  });
-}
-
-/**
- * @param srcDir  The source directory where compass ran.
- * @param options The options used to call broccoli-compass.
- */
-function cleanupSource(srcDir, options) {
-  return new rsvp.Promise(function(resolve) {
-    var result = expand({ cwd: srcDir }, '**/*.css');
-    if(options.cssDir) {
-      var cssDir = options.cssDir;
-      if(cssDir && cssDir !== '.') {
-        result.push(cssDir);
-      }
-    }
-
-    var resLength = result.length;
-    for(var i = 0; i < resLength; i++) {
-      // a async delete does not delete the hidden .sass-cache dir
-      fse.removeSync(path.join(srcDir, result[i]));
-    }
-    resolve();
-  });
+function makeCompileDir(target, source, tempKey, cache) {
+  var stats, file;
+  var entries = fs.readdirSync(source).sort();
+  quickTemp.makeOrRemake(target, tempKey);
+  for (var i = 0; i < entries.length; i++) {
+    symlinkOrCopy(source + '/' + entries[i], target[tempKey] + '/' + entries[i]);
+  }
 }
 
 /**
@@ -133,32 +139,15 @@ function CompassCompiler(inputTree, files, options) {
   this.options = merge(true, this.defaultOptions);
   merge(this.options, options);
   options = this.options;
-  var sassDir = options.sassDir;
-  var cssDir = options.cssDir;
-
-  //if sassDir is the same as srcDir or cssDir we just exclude scss/sass files. Otherwise all the sassDir
-  if (sassDir === '.' || sassDir === cssDir) {
-    exclude.push('!**/*.{scss,sass}');
-  } else {
-    exclude.push('!' + sassDir + '/**');
-  }
-
-  if (Array.isArray(options.exclude)) {
-    this.options.exclude = options.exclude.map(function (pattern) {
-      return '!' + pattern;
-    }).concat(exclude);
-  } else {
-    this.options.exclude = exclude;
-  }
-
+  options.files = (options.files instanceof Array) ? options.files : [];
   this.generateCmdLine();
-
-  // Call "super" (the broccoli-caching-writer constructor)
-  Writer.call(this, inputTree, this.options);
+  this.inputTree = inputTree;
 }
 
 CompassCompiler.prototype = Object.create(Writer.prototype);
 CompassCompiler.prototype.constructor = CompassCompiler;
+CompassCompiler.prototype.compile = compile;
+CompassCompiler.prototype.moveToDest = moveToDest;
 CompassCompiler.prototype.generateCmdLine = function () {
   var value;
   var filtredOptions = {};
@@ -179,27 +168,38 @@ CompassCompiler.prototype.generateCmdLine = function () {
   this.cmdLine = cmdArgs.concat( dargs(filtredOptions) ).join(' ');
   return this.cmdLine;
 };
-CompassCompiler.prototype.updateCache = function (srcDir, destDir) {
-  var options = this.options;
 
-  return compile(this.cmdLine, {cwd: srcDir})
-    .then(function() {
-      return copyRelevant(srcDir, destDir, options);
-    })
-    .then(function() {
-      return cleanupSource(srcDir, options);
-    })
-    .then(function() {
+CompassCompiler.prototype.write = function (readTree, destDir) {
+  var self = this;
+  var options = this.options;
+  var files = this.options.files;
+  return readTree(this.inputTree).then(function (srcDir) {
+    this.cache = this.walkDir(srcDir, {cache: this.cache, ignore: /^\.sass-cache/});
+    if (this.cache.changed.length === 0) {
       return destDir;
-    }, function (err) {
-      var msg = err.message || err;
-      if (options.ignoreErrors === false) {
-        throw err;
-      } else {
-        console.log(msg);
-      }
-    });
+    }
+    // Compass compiler generates css files, images and the .sass-cache folder, we could compile in srcDir
+    // and issue changed files to dest but it will pollute srcDir, to avoid this, we compile in a tmp 
+    // directory in which only root files are symlinked
+    makeCompileDir(this, srcDir, 'sassCompileDir');
+    return this.compile(this.cmdLine, {cwd: this.sassCompileDir})
+      .then(this.moveToDest.bind(this, this.sassCompileDir, destDir))
+      .then(function(destination) {
+        return destination;
+      }, function (err) {
+        var msg = err.message || err;
+        if (options.ignoreErrors === false) {
+          throw err;
+        } else {
+          console.log(msg);
+        }
+      });
+    }.bind(this));
 };
+
+// instead of using broccoli-cache-writer we use a builtin function in order to reuse stats
+// as we need to check changed files after.
+CompassCompiler.prototype.walkDir = walkCachedSync;
 
 /**
  * Default options that are merged onto given options making sure these options
@@ -207,6 +207,7 @@ CompassCompiler.prototype.updateCache = function (srcDir, destDir) {
  */
 CompassCompiler.prototype.defaultOptions = {
   // plugin options
+  cleanOutput: true,
   ignoreErrors: false,
   compassCommand: 'compass'
 };
