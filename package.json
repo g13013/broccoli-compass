@@ -36,8 +36,7 @@
   },
   "devDependencies": {
     "broccoli": "~0.12.3",
-    "chai": "*",
-    "grunt": "^0.4.5",
-    "grunt-mocha-test": "^0.11.0"
+    "expect.js": "^0.3.1",
+    "rimraf": "^2.2.8"
   }
 }
