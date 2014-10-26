@@ -10,7 +10,7 @@
     "compiler"
   ],
   "scripts": {
-    "test": "grunt"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
