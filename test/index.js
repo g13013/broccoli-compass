@@ -7,7 +7,7 @@ var expect = require('expect.js');
 var merge = require('merge');
 var rimraf = require('rimraf').sync;
 var mkdirp = require('mkdirp').sync;
-var symlinkOrCopy = require('symlink-or-copy').sync;
+var copyRecursive = require('symlink-or-copy/node_modules/copy-dereference').sync;
 
 //TODO: add test for files options
 
@@ -26,7 +26,7 @@ describe('broccoli-compass', function() {
     var entries = fs.readdirSync(sampleProject).sort();
     mkdirp(srcDir);
     for (var i = 0; i < entries.length; i++) {
-      symlinkOrCopy(sampleProject + '/' + entries[i], srcDir + '/' + entries[i]);
+      copyRecursive(sampleProject + '/' + entries[i], srcDir + '/' + entries[i]);
     }
     defaultOptions = {
       cssDir: cssDir,
