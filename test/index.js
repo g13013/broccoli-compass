@@ -54,7 +54,7 @@ describe('broccoli-compass', function() {
     }
   });
 
-  it('Chaches result', function() {
+  it('should cache the result', function() {
     var tree = compassCompile(srcDir, defaultOptions);
     var compile = tree.compile;
     var calls = 0;
