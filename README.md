@@ -38,7 +38,7 @@ if `files` is omitted the entire folder will be compiled.
 
 ##### Compass Options
 
-Please refer to the [compass configuration](http://compass-style.org/help/tutorials/configuration-reference/) for more details about the available options
+Please refer to the [compass configuration](http://compass-style.org/help/documentation/configuration-reference/) for more details about the available options
 
 
 ## Credits
