@@ -42,7 +42,6 @@ Please refer to the [compass configuration](http://compass-style.org/help/docume
 
 ## Credits
 * [Aboubakr Gasmi](https://github.com/g13013)
-* [Ferry de Boer](https://github.com/ferrydeboer) for his big contribution and for providing tests.
 * All the contributors.
 
 ##License
