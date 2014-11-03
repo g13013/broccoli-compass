@@ -98,33 +98,36 @@ function moveToDest(srcDir, destDir) {
 }
 
 /**
- * Symlink files source into destination, this will avoid pulluting source directory
- * with files generated at compile time.
  * 
- * @param  {String} source      Source directory
- * @param  {String} destination Destination directory
+ * Compass compiler generates css files, images and the .sass-cache folder, we could compile in srcDir
+ * and issue changed files to dest but it will pollute srcDir, to avoid this, we compile in a mirrored tmp dir
+ * 
+ * This function, recursively symlink files (not folders) in a temporary dir.
+ *
+ * TODO: copy symlink only changed files
+ * @param  {String} srcDir  Source directory
  */
-function makeCompileDir(target, source, tempKey, cache) {
+function makeCompileDir(srcDir) {
   var src;
   var sassCacheDir;
-  var destDir;
-  var paths = target.cache.paths;
+  var paths = this.cache.paths;
   var list = Object.keys(paths);
-  quickTemp.makeOrRemake(target, tempKey);
-  destDir = target[tempKey];
-  sassCacheDir = destDir + '/../.sass-cache';
+
+  quickTemp.makeOrRemake(this, 'sassCompileDir');
+
+  sassCacheDir = this.sassCompileDir + '/../.sass-cache';
   for (var i = 0; i < list.length; i++) {
     sub = list[i];
     if (paths[sub].isDirectory) {
-      fs.mkdirSync(destDir + '/' + sub);
+      fs.mkdirSync(this.sassCompileDir + '/' + sub);
       continue;
     }
-    symlinkOrCopy(source + '/' + sub, destDir + '/' + sub);
+    symlinkOrCopy(srcDir + '/' + sub, this.sassCompileDir + '/' + sub);
   }
   if (!fs.existsSync(sassCacheDir)) {
     fs.mkdirSync(sassCacheDir);
   }
-  fs.symlinkSync(sassCacheDir, destDir + '/.sass-cache');
+  fs.symlinkSync(sassCacheDir, this.sassCompileDir + '/.sass-cache');
 }
 
 /**
@@ -162,6 +165,7 @@ CompassCompiler.prototype = Object.create(Writer.prototype);
 CompassCompiler.prototype.constructor = CompassCompiler;
 CompassCompiler.prototype.compile = compile;
 CompassCompiler.prototype.moveToDest = moveToDest;
+CompassCompiler.prototype.prepareCompileDir = makeCompileDir;
 CompassCompiler.prototype.generateCmdLine = function () {
   var value;
   var filtredOptions = {};
@@ -190,6 +194,7 @@ CompassCompiler.prototype.read = function (readTree) {
     if (this.cache.changed.length === 0) {
       return this.lastDestDir;
     }
+    this.prepareCompileDir(srcDir);
     if (cleanOutput) {
       quickTemp.makeOrRemake(this, 'tmpDestDir');
     }
@@ -201,17 +206,14 @@ CompassCompiler.prototype.read = function (readTree) {
 };
 
 CompassCompiler.prototype.write = function (srcDir, destDir) {
-  var options = this.options;
-  // Compass compiler generates css files, images and the .sass-cache folder, we could compile in srcDir
-  // and issue changed files to dest but it will pollute srcDir, to avoid this, we compile in a mirrored tmp dir
-  makeCompileDir(this, srcDir, 'sassCompileDir');
+  var ignoreErrors = this.options.ignoreErrors;
   return this.compile(this.cmdLine, {cwd: this.sassCompileDir})
     .then(this.moveToDest.bind(this, this.sassCompileDir, destDir))
     .then(function(destination) {
       return destination;
     }, function (err) {
       var msg = err.message || err;
-      if (options.ignoreErrors === false) {
+      if (ignoreErrors === false) {
         throw err;
       } else {
         console.log(msg);
