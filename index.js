@@ -231,7 +231,7 @@ CompassCompiler.prototype.walkDir = walkCachedSync;
  */
 CompassCompiler.prototype.defaultOptions = {
   // plugin options
-  cleanOutput: true,
+  cleanOutput: false,
   ignoreErrors: false,
   compassCommand: 'compass'
 };
