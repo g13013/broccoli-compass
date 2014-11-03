@@ -7,7 +7,8 @@ var expect = require('expect.js');
 var merge = require('merge');
 var rimraf = require('rimraf').sync;
 var mkdirp = require('mkdirp').sync;
-var copyRecursive = require('symlink-or-copy/node_modules/copy-dereference').sync;
+var walkTree = require('../lib/walk_cached_sync');
+var symlinkOrCopy = require('symlink-or-copy').sync;
 
 //TODO: add test for files options
 
@@ -20,13 +21,17 @@ describe('broccoli-compass', function() {
   this.timeout(20000);
 
   var sampleProject = 'test/fixture/sample';
+  var sampleFiles = walkTree(sampleProject).paths;
 
   beforeEach(function() {
-    var stats, file;
-    var entries = fs.readdirSync(sampleProject).sort();
+    var file;
     mkdirp(srcDir);
-    for (var i = 0; i < entries.length; i++) {
-      copyRecursive(sampleProject + '/' + entries[i], srcDir + '/' + entries[i]);
+    for (file in sampleFiles) {
+      if (sampleFiles[file].isDirectory) {
+        fs.mkdirSync(srcDir + '/' + file);
+        continue;
+      }
+      symlinkOrCopy(sampleProject + '/' + file, srcDir + '/' + file);
     }
     defaultOptions = {
       cssDir: cssDir,
