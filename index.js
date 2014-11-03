@@ -177,32 +177,38 @@ CompassCompiler.prototype.generateCmdLine = function () {
   return this.cmdLine;
 };
 
-CompassCompiler.prototype.write = function (readTree, destDir) {
-  var self = this;
-  var options = this.options;
-  var files = this.options.files;
+CompassCompiler.prototype.read = function (readTree) {
+  var cleanOutput = this.options.cleanOutput;
   return readTree(this.inputTree).then(function (srcDir) {
     this.cache = this.walkDir(srcDir, {cache: this.cache, ignore: /^\.sass-cache/});
     if (this.cache.changed.length === 0) {
-      return destDir;
+      return this.lastDestDir;
     }
-    // Compass compiler generates css files, images and the .sass-cache folder, we could compile in srcDir
-    // and issue changed files to dest but it will pollute srcDir, to avoid this, we compile in a tmp 
-    // directory in which only root files are symlinked
-    makeCompileDir(this, srcDir, 'sassCompileDir');
-    return this.compile(this.cmdLine, {cwd: this.sassCompileDir})
-      .then(this.moveToDest.bind(this, this.sassCompileDir, destDir))
-      .then(function(destination) {
-        return destination;
-      }, function (err) {
-        var msg = err.message || err;
-        if (options.ignoreErrors === false) {
-          throw err;
-        } else {
-          console.log(msg);
-        }
-      });
+    quickTemp.makeOrRemake(this, 'tmpDestDir');
+    return this.write(srcDir, this.tmpDestDir).then(function (destDir) {
+      this.lastDestDir = destDir;
+      return destDir;
     }.bind(this));
+  }.bind(this));
+};
+
+CompassCompiler.prototype.write = function (srcDir, destDir) {
+  var options = this.options;
+  // Compass compiler generates css files, images and the .sass-cache folder, we could compile in srcDir
+  // and issue changed files to dest but it will pollute srcDir, to avoid this, we compile in a mirrored tmp dir
+  makeCompileDir(this, srcDir, 'sassCompileDir');
+  return this.compile(this.cmdLine, {cwd: this.sassCompileDir})
+    .then(this.moveToDest.bind(this, this.sassCompileDir, destDir))
+    .then(function(destination) {
+      return destination;
+    }, function (err) {
+      var msg = err.message || err;
+      if (options.ignoreErrors === false) {
+        throw err;
+      } else {
+        console.log(msg);
+      }
+    });
 };
 
 // instead of using broccoli-cache-writer we use a builtin function in order to reuse stats
