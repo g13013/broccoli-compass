@@ -1,3 +1,9 @@
+### 0.1.2
+* Fixed compass configuration documentation link in README.md
+* Make sure that the CachingWriter constructor is called and add filterFromCache to the ignoredOptions
+* Fixed variable use
+* Fixed exec function not returning after reject
+
 ### 0.1.1
 * Added .jshintrc file.
 * Updated `broccoli-caching-writer` to `0.4.2` that fixes an important bug, see [PR](https://github.com/rwjblue/broccoli-caching-writer/pull/7).
