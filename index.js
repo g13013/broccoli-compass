@@ -67,21 +67,21 @@ function moveToDest(srcDir, destDir) {
   var linkedFiles = [];
   for (var i = 0; i < generated.length; i += 1) {
     file = generated[i];
-    if (file.substr(-1) !== '/' && copiedCache[file] !== cache[file].statsHash) {
-      if (file.substr(-4) !== '.css') {
-        continue;
-      }
-      copied[file] = cache[file];
-      src = srcDir + '/' + file;
+    if (cache[file].isDirectory || copiedCache[file] === cache[file].statsHash) {
+      continue;
+    }
+    src = srcDir + '/' + file;
+    if (file.substr(-4) === '.css') {
       content = fs.readFileSync(src);
       cssDir = path.dirname(file);
       while ((linkedFile = urlRe.exec(content))) {
-        //Note: linked files are relative to srcDir
-        linkedFiles.push( path.normalize(cssDir + '/' + linkedFile[1]) );
+        linkedFile = (linkedFile[1][0] === '/') ? linkedFile[1].substr(1) : path.normalize(cssDir + '/' + linkedFile[1]);
+        linkedFiles.push(linkedFile);
       }
-      mkdirp(destDir + '/' + path.dirname(file));
-      symlinkOrCopy(src, destDir + '/' + file);
     }
+    mkdirp(destDir + '/' + path.dirname(file));
+    symlinkOrCopy(src, destDir + '/' + file);
+    copied[file] = cache[file].statsHash;
   }
 
   for (i = 0; i < linkedFiles.length; i += 1) {
