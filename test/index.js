@@ -85,6 +85,50 @@ describe('broccoli-compass', function() {
       });
   });
 
+  it('cleanOutput ON', function() {
+    defaultOptions.cleanOutput = true;
+    var tree = compassCompile(srcDir, defaultOptions);
+    var builder = new broccoli.Builder(tree);
+    var expectedFiles = [
+      'fonts',
+      'fonts/MyFont.ttf',
+      'fonts/MyFont.otf',
+      'fonts/MyFont.svg',
+      'fonts/MyFont.woff',
+      'fonts/MyFont.eot',
+      'css',
+      'css/file1.css',
+      'css/sub',
+      'css/sub/subfile.css',
+      'img',
+      'img/icons-sa10faadd8f.png',
+      'img/arrow_right_grey.png'
+    ];
+    return builder.build().then(function (r) {
+        if (r.directory !== tree.tmpDestDir) {
+          expect().fail('destDir should be tmpDestDir, got \n\t' + r + '\n\n instead of\n\t' + tree.tmpDestDir);
+        }
+        files = walkTree(r.directory);
+        expect(files.paths).to.only.have.keys(expectedFiles);
+      }).catch(function (err) {
+        expect().fail(err);
+      });
+  });
+
+  //test makeCompileDir function ?
+  it('cleanOutput OFF', function() {
+    defaultOptions.cleanOutput = false;
+    var tree = compassCompile(srcDir, defaultOptions);
+    var builder = new broccoli.Builder(tree);
+    return builder.build().then(function (r) {
+        if (r.directory !== tree.sassCompileDir) {
+          expect().fail('destDir should be sassCompileDir, got \n\t' + r.directory + '\n\n instead of\n\t' + tree.sassCompileDir);
+        }
+      }).catch(function (err) {
+        expect().fail(err);
+      });
+  });
+
   it('should ignore errors when ignoreErrors is set to TRUE', function() {
     var options = merge(defaultOptions, { compassCommand: 'notExistantTool' });
     var tree = compassCompile(srcDir, options);
