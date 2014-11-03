@@ -98,18 +98,26 @@ function moveToDest(srcDir, destDir) {
 }
 
 /**
- * Symlink files in the root directory of source into destination, this will avoid pulluting source directory
+ * Symlink files source into destination, this will avoid pulluting source directory
  * with files generated at compile time.
  * 
  * @param  {String} source      Source directory
  * @param  {String} destination Destination directory
  */
 function makeCompileDir(target, source, tempKey, cache) {
-  var stats, file;
-  var entries = fs.readdirSync(source).sort();
+  var src;
+  var destDir;
+  var paths = target.cache.paths;
+  var list = Object.keys(paths);
   quickTemp.makeOrRemake(target, tempKey);
-  for (var i = 0; i < entries.length; i++) {
-    symlinkOrCopy(source + '/' + entries[i], target[tempKey] + '/' + entries[i]);
+  destDir = target[tempKey];
+  for (var i = 0; i < list.length; i++) {
+    sub = list[i];
+    if (paths[sub].isDirectory) {
+      fs.mkdirSync(destDir + '/' + sub);
+      continue;
+    }
+    symlinkOrCopy(source + '/' + sub, destDir + '/' + sub);
   }
 }
 
