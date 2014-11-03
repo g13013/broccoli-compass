@@ -48,7 +48,7 @@ describe('broccoli-compass', function() {
    * Removes the Broccoli temp directory.
    * set cleanup to false to leave tmp dir.
    */
-  var cleanup = typeof process.env.NO_CLEANUP === 'boolean' ? process.env.NO_CLEANUP : true;
+  var cleanup = process.env.CLEANUP ? process.env.CLEANUP === 'true' : true;
   before(function() {
     rimraf('tmp');
   });  
