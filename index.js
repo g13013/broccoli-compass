@@ -184,7 +184,9 @@ CompassCompiler.prototype.read = function (readTree) {
     if (this.cache.changed.length === 0) {
       return this.lastDestDir;
     }
-    quickTemp.makeOrRemake(this, 'tmpDestDir');
+    if (cleanOutput) {
+      quickTemp.makeOrRemake(this, 'tmpDestDir');
+    }
     return this.write(srcDir, this.tmpDestDir).then(function (destDir) {
       this.lastDestDir = destDir;
       return destDir;
