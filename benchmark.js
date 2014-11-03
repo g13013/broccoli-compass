@@ -41,6 +41,7 @@ function traceTime(desc, func) {
   return result;
 }
 
+tree.prepareCompileDir = traceTime.bind(tree, 'Prepare compile dir', tree.prepareCompileDir);
 tree.walkDir = traceTime.bind(tree, 'Walk the tree', tree.walkDir);
 tree.compile = traceTime.bind(tree, 'Compass compile', tree.compile);
 tree.moveToDest = traceTime.bind(tree, 'Move to destination', tree.moveToDest);
