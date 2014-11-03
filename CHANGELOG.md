@@ -1,3 +1,17 @@
+### 0.2.0
+* Updated Tests.
+* Updated README.md file.
+* Added benchmarks to measure every step of the build. 
+* Complete refactor to enhance build speed.
+* Use `symlink-or-copy` that tries to symlink to avoid copying.
+* Deprecate the `exclude` option in favor of the `cleanOutput` option.
+* Added `cleanOutput` option to issue only compiled css and their linked images and fonts.
+* Dropping usage of `broccoli-caching-writer`, now using `broccoli-writer` with an internal reusable cache.
+* Dropping usage of `fs-extra`.
+* Dropping usage of `grunt`, to run test, now we use `npm test`.
+* Dropping usage of `glob-expand`.
+* Dropping usage of `chai` in favor of `expect.js`.
+
 ### 0.1.2
 * Fixed compass configuration documentation link in README.md
 * Make sure that the CachingWriter constructor is called and add filterFromCache to the ignoredOptions
