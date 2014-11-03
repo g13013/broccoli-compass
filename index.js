@@ -106,11 +106,13 @@ function moveToDest(srcDir, destDir) {
  */
 function makeCompileDir(target, source, tempKey, cache) {
   var src;
+  var sassCacheDir;
   var destDir;
   var paths = target.cache.paths;
   var list = Object.keys(paths);
   quickTemp.makeOrRemake(target, tempKey);
   destDir = target[tempKey];
+  sassCacheDir = destDir + '/../.sass-cache';
   for (var i = 0; i < list.length; i++) {
     sub = list[i];
     if (paths[sub].isDirectory) {
@@ -119,6 +121,10 @@ function makeCompileDir(target, source, tempKey, cache) {
     }
     symlinkOrCopy(source + '/' + sub, destDir + '/' + sub);
   }
+  if (!fs.existsSync(sassCacheDir)) {
+    fs.mkdirSync(sassCacheDir);
+  }
+  fs.symlinkSync(sassCacheDir, destDir + '/.sass-cache');
 }
 
 /**
