@@ -1,4 +1,9 @@
+### 0.2.1
+* Fix travis complain about missing `mocha` module.
+
 ### 0.2.0
+* Now all broccoli-compass instances and subsequent builds share the same .sass-cache located in `tmp/.sass-cache`
+* Fixed `EMFILE` errors, see [PR](https://github.com/g13013/broccoli-compass/issues/22), now all operations are synchronious.
 * Updated Tests.
 * Updated README.md file.
 * Added benchmarks to measure every step of the build. 

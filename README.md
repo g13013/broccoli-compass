@@ -1,5 +1,5 @@
 
-# broccoli-compass [![Build Status](https://travis-ci.org/g13013/broccoli-compass.svg?branch=refactor)](https://travis-ci.org/g13013/broccoli-compass)
+# broccoli-compass [![Build Status](https://travis-ci.org/g13013/broccoli-compass.svg?branch=master)](https://travis-ci.org/g13013/broccoli-compass)
 
 Compiles compass project using [compass](https://github.com/chriseppstein/compass), so you need to have compass installed on your machine.
 
