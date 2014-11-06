@@ -1,3 +1,6 @@
+### 0.2.2
+* Unlink .sass-cache after compile.
+
 ### 0.2.1
 * Fix travis complain about missing `mocha` module.
 
