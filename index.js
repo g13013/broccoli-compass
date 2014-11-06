@@ -206,12 +206,14 @@ CompassCompiler.prototype.read = function (readTree) {
 };
 
 CompassCompiler.prototype.write = function (srcDir, destDir) {
+  var self = this;
   var ignoreErrors = this.options.ignoreErrors;
   return this.compile(this.cmdLine, {cwd: this.sassCompileDir})
-    .then(this.moveToDest.bind(this, this.sassCompileDir, destDir))
-    .then(function(destination) {
-      return destination;
-    }, function (err) {
+    .then(function () {
+      fs.unlinkSync(self.sassCompileDir + '/.sass-cache');
+      return self.moveToDest(self.sassCompileDir, destDir);
+    })
+    .catch(function (err) {
       var msg = err.message || err;
       if (ignoreErrors === false) {
         throw err;
