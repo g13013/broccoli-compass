@@ -61,7 +61,7 @@ function moveToDest(srcDir, destDir) {
   var copiedCache = this.copiedCache || {};
   var copied = {};
   var options = this.options;
-  var tree = this.walkDir(srcDir, {cache: this.cache, ignore: /^\.sass-cache/});
+  var tree = this.walkDir(srcDir, {cache: this.cache});
   var cache = tree.paths;
   var generated = tree.changed;
   var linkedFiles = [];
@@ -190,7 +190,7 @@ CompassCompiler.prototype.generateCmdLine = function () {
 CompassCompiler.prototype.read = function (readTree) {
   var cleanOutput = this.options.cleanOutput;
   return readTree(this.inputTree).then(function (srcDir) {
-    this.cache = this.walkDir(srcDir, {cache: this.cache, ignore: /^\.sass-cache/});
+    this.cache = this.walkDir(srcDir, {cache: this.cache});
     if (this.cache.changed.length === 0) {
       return this.lastDestDir;
     }
