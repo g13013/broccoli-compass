@@ -59,7 +59,7 @@ function moveToDest(srcDir, destDir) {
     return srcDir;
   }
   var content, cssDir, src;
-  var copiedCache = this.copiedCache || {};
+  var copiedCache = this.copiedCache || {};
   var copied = {};
   var options = this.options;
   var tree = this.walkDir(srcDir, {cache: this.cache});
@@ -143,7 +143,7 @@ function makeCompileDir(srcDir) {
  * @returns {CompassCompiler}
  */
 function CompassCompiler(inputTree, files, options) {
-  options = arguments.length > 2 ? (options || {}) : (files || {});
+  options = arguments.length > 2 ? (options || {}) : (files || {});
   if (arguments.length > 2) {
     console.log('[broccoli-compass] DEPRECATION: passing files to broccoli-compass constructor as second parameter is deprecated, ' +
                 'use options.files instead');
