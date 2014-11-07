@@ -1,3 +1,6 @@
+### 0.2.3
+* [BUGFIX] Use symlink-or-copy to link .sass-cache and simple delete after compile to fix failures on windows.
+
 ### 0.2.2
 * Unlink .sass-cache after compile.
 
