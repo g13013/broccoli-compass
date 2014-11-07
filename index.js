@@ -1,5 +1,6 @@
 var path = require('path');
 var exec = require('child_process').exec;
+var rimraf = require('rimraf').sync;
 var quickTemp = require('quick-temp');
 var symlinkOrCopy = require('symlink-or-copy').sync;
 var merge = require('merge');
@@ -127,7 +128,11 @@ function makeCompileDir(srcDir) {
   if (!fs.existsSync(sassCacheDir)) {
     fs.mkdirSync(sassCacheDir);
   }
-  fs.symlinkSync(sassCacheDir, this.sassCompileDir + '/.sass-cache');
+  try {
+    symlinkOrCopy(sassCacheDir, this.sassCompileDir + '/.sass-cache');
+  } catch (err) {
+    console.log('[broccoli-compass] Warning: can\'t symlink or copy .sass-cache directory:\n\t', err.message);
+  }
 }
 
 /**
@@ -210,7 +215,11 @@ CompassCompiler.prototype.write = function (srcDir, destDir) {
   var ignoreErrors = this.options.ignoreErrors;
   return this.compile(this.cmdLine, {cwd: this.sassCompileDir})
     .then(function () {
-      fs.unlinkSync(self.sassCompileDir + '/.sass-cache');
+      try {
+        rimraf(self.sassCompileDir + '/.sass-cache');
+      } catch(err) {
+        console.log('[broccoli-compass] Warning: cannot unlink or delete .sass-cache directory:\n\t', err.message);
+      }
       return self.moveToDest(self.sassCompileDir, destDir);
     })
     .catch(function (err) {
