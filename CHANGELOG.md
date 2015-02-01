@@ -1,3 +1,8 @@
+### 0.2.4
+* [FIX] move rimraf module from devDependencies to dependencies
+* [README] remove deprecated `files` parameter from doc
+* Changed the error message formating 
+
 ### 0.2.3
 * [BUGFIX] Use symlink-or-copy to link .sass-cache and simple delete after compile to fix failures on windows.
 
