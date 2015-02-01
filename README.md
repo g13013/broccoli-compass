@@ -22,7 +22,7 @@ Note: The API might change in subsequent 0.x versions.
 
 ```js
 var compileSass = require('broccoli-compass');
-var compassTree = compileSass(tree, files, {
+var compassTree = compileSass(tree, {
     outputStyle: 'expanded'
   });
 ```
