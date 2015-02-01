@@ -33,11 +33,11 @@ function compile(cmdLine, options) {
       if (err) {
         // Provide a robust error message in case of failure.
         // compass sends errors to sdtout, so it's important to include that
-        err.message = '[broccoli-compass] failed while executing compass command line\n' +
-                      '[broccoli-compass] Working directory:\n' + options.cwd + '\n' +
-                      '[broccoli-compass] Executed:\n' + cmdLine + '\n' +
-                      '[broccoli-compass] stdout:\n' + stdout + '\n' +
-                      '[broccoli-compass] stderr:\n' + stderr + '\n';
+        err.message = '\n[broccoli-compass] ' + err +
+                      '    directory: ' + options.cwd + '\n' +
+                      '    cmdline: ' + cmdLine + '\n' +
+                      '    stderr: ' + stderr + '\n' +
+                      (stdout && '    stdout:  ' + stdout + '\n' || '\n');
 
         return reject(err);
       }
